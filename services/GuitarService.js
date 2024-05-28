@@ -42,7 +42,7 @@ class GuitarService {
 	}
 	// delete a spefic guitar with id
 	async delete(id) {
-		return this.Category.destroy({
+		return this.Guitar.destroy({
 			where: { id: id }
 		})
 	}

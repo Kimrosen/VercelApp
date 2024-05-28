@@ -56,9 +56,9 @@ router.delete('/', jsonParser, ensureAuth, async (req, res) => {
 
     const guitarId = req.body.id;
 
-    // and does category id exist?
+    // and does guitar id exist?
     const existingGuitar = await guitarService.getOne(guitarId);
-    if (!(existingGuitar.id == categoryId)) {
+    if (!(existingGuitar.id == guitarId)) {
         return res.status(400).json('guitar with that id not exist');
     }
 
