@@ -27,27 +27,43 @@ const ensureAuth = function (req, res, next) {
 
 /* GET all Guitars */
 router.get('/', ensureAuth, async function (req, res, next) {
-	const guitars = await guitarService.get();
-	res.json(guitars).status(200);
+    const guitars = await guitarService.get();
+    res.json(guitars).status(200);
 });
 
 /* GET specified Guitar */
 router.get('/:guitarId', ensureAuth, async function (req, res, next) {
-	const guitar = await guitarService.getGuitarDetails(req.params.guitarId);
-	res.json(guitar).status(200);
+    const guitar = await guitarService.getGuitarDetails(req.params.guitarId);
+    res.json(guitar).status(200);
 });
 
 /* POST new Guitar */
 router.post('/', ensureAuth, jsonParser, async function (req, res, next) {
-	let Year = req.body.year;
-	let Price = req.body.price;
-	let BrandId = req.body.brandId;
-	let ModelId = req.body.modelId;
-	let ColorId = req.body.colorId;
-	console.log("Year: ", Year);
-	console.log("Price: ", Price);
-	const newGuitar = await guitarService.create(Year, Price, BrandId, ModelId, ColorId);
-	res.status(200).json({ success: true, message: "Guitar added successfully.", newGuitar });
+    let Year = req.body.year;
+    let Price = req.body.price;
+    let BrandId = req.body.brandId;
+    let ModelId = req.body.modelId;
+    let ColorId = req.body.colorId;
+    console.log("Year: ", Year);
+    console.log("Price: ", Price);
+    const newGuitar = await guitarService.create(Year, Price, BrandId, ModelId, ColorId);
+    res.status(200).json({ success: true, message: "Guitar added successfully.", newGuitar });
+});
+
+
+// Delete a specific guitar for the logged in user
+router.delete('/', jsonParser, ensureAuth, async (req, res) => {
+
+    const guitarId = req.body.id;
+
+    // and does category id exist?
+    const existingGuitar = await guitarService.getOne(guitarId);
+    if (!(existingGuitar.id == categoryId)) {
+        return res.status(400).json('guitar with that id not exist');
+    }
+
+    await guitarService.delete(guitarId);
+    res.status(200).json({ success: true, message: "Guitar deleted successfully.", guitarId });
 });
 
 module.exports = router;
